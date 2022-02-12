@@ -10,6 +10,15 @@ var mainMap={
     observer:null,
     selectedFeature:null,
 
+    // defaults if no present on configuration file
+    classybrewDefaults:{
+        numOfClasses: 10,// number of classes
+        method: 'jenks',// method to classify 
+        colorbrewer: 'RdYlGn'
+    },
+    
+
+
     init:(selectedDataSource)=>{
         return new rxjs.Observable(
             (observer)=>{
@@ -50,12 +59,19 @@ var mainMap={
      * @param {Array} values, An array with the geocode and new values for the "indicator" attribute
      */
     updateMainLayer:(csv)=>{
+        let inputData=[];
+        // set indicator value from each geom on geojson
         mainMap.geojson.features.forEach(
             (f)=>{
                 let geocode=f.properties["gc"];
-                f.properties["indicator"]=csv.values[geocode];
+                let v=( (isNaN(csv.values[geocode]))?(0):(csv.values[geocode]) );
+                f.properties["indicator"]=v;
+                inputData.push(v);
             }
         );
+
+        // first, prepare the list of colors using an external classifiers
+        mainMap.classifyData(inputData);
         mainMap.createMainLayer(mainMap.geojson);
     },
 
@@ -77,18 +93,38 @@ var mainMap={
         mainMap.info.addTo(mainMap.map);
     },
 
+    classifyData: (inputData)=> {
+        /**
+         * Using an external method to generate the classes from data
+         * See: https://github.com/softwarevale/classybrew (forked repo)
+         * by the work of Joshua Tanner
+         */
+        var brew = new classyBrew(); // create brew object
+        brew.setSeries(inputData); // define data to classify
+
+        // set number of classes
+        brew.setNumClasses(mainMap.classybrewDefaults.numOfClasses);
+        // set color code using ColorBrewer palettes
+        brew.setColorCode(mainMap.classybrewDefaults.colorbrewer);
+        // classify data, methods are: equal_interval, quantile and jenks
+        brew.classify(mainMap.classybrewDefaults.method);
+        mainMap.brew=brew;
+    },
+
     getLegendColor:(value)=>{
+        return mainMap.brew.getColorInRange(value);
         /** 
          * Using the length of the color list from the conf file
          * as the number of classes in the legend
          */
-        let len = mainMap.legend.colors.length,
-        index = parseInt(value*len);
-        index = index>=len ? len-1 : index;
-        return mainMap.legend.colors[index];
+        // let len = mainMap.legend.colors.length,
+        // index = parseInt(value*len);
+        // index = index>=len ? len-1 : index;
+        // return mainMap.legend.colors[index];
     },
 
     style:(feature)=>{
+        if(typeof feature.properties.indicator=='undefined') return {};
         return {
             weight: 2,
             opacity: 1,

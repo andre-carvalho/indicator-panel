@@ -118,7 +118,7 @@ var dataLoader={
         var csv=dataLoader.getCSVByKey(treeview.getSelected().key+"-"+key);
         // get code to selected geom
         let geocode=detail.selectedGeom.gc;
-        return (csv && csv.values.length && geocode)?(parseFloat(csv.values[geocode].toFixed(2))):(null);
+        return (csv && csv.values.length && geocode && csv.values[geocode])?(parseFloat(csv.values[geocode].toFixed(2))):(null);
     }
 
 };
