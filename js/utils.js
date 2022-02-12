@@ -25,6 +25,7 @@ var utils={
 
         let remainHeight=window.innerHeight-hh-mh-dh-df-defaultPaddingRow;
         $('.detail-body').height(remainHeight);
+        $('#detail-children').height(remainHeight);
     },
 
     /**

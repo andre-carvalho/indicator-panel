@@ -86,6 +86,9 @@ used by legend inside mapa (disabled)
 .detail-body{
     min-height: calc(100% - 10px);
 }
+#detail-children{
+    overflow-y: auto;
+}
 
 /** Detail bar */
 .footer{
