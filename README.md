@@ -197,6 +197,8 @@ There is a lot of software used in this work. Any of these software has a licens
 
  > Bootstrap https://github.com/twbs/bootstrap/blob/master/LICENSE
 
+ > ClassyBrew: https://github.com/tannerjt/classybrew/blob/master/LICENSE.txt
+
 ### Thanks for the sample code
 
 To build my TreeView i use this example.
@@ -206,6 +208,9 @@ To build my TreeView i use this example.
 
 To build the map i see this example.
  > https://leafletjs.com/examples/choropleth/
+
+To implement the slicing options, this example is useful.
+ > http://tannerjt.github.io/classybrew-www/examples/basic/
 
 ### Author
 
